@@ -17,7 +17,7 @@ from classes.generator import Generator
 from classes.db import Db
 
 # init:
-from classes.types import DATE_TYPES
+from classes.dbtype import DATE_TYPES
 from inc.prompt import enter_table_to_update, enter_columns_to_update
 
 table_name = 'sales_flat_order'
@@ -36,7 +36,7 @@ fields = enter_columns_to_update(resource, table_name, pk_column=id_column_name,
 for col in fields:
     col_type = str.lower(str(col['type']))
 
-    for dt in DATE_TYPES:
+    for dt in DbType.DATE_TYPES:
         if col_type.startswith(dt):
             print(f"{col['name']} -> {col['type']}")
 

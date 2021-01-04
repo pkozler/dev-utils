@@ -15,7 +15,7 @@ from db.models import Base as Entity
 
 from inc import optarg
 import inc.tempfile as Cache
-import inc.dbconn as Model
+import inc.connection as Model
 
 args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.entity_id'.split()
 # args = sys.argv[1:]
