@@ -8,14 +8,12 @@ from sqlalchemy.sql.functions import func
 
 from classes.db import Db as Resource
 
-import db.models
 from classes.generator import Generator
-from classes.util import get_temp_file_name
 from db.models import Base as Entity
 
 from inc import optarg
-import inc.tempfile as Cache
-import inc.connection as Model
+from classes.tempfile import TempFile
+from classes.connection import Connection
 
 args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.entity_id'.split()
 # args = sys.argv[1:]
@@ -53,11 +51,16 @@ fk_cnt: int = int(query_cnt_fk.first()[0])
 broken_to_cnt: float = float(fk_broken_cnt) / float(fk_cnt)
 print(f'Broken keys: {fk_broken_cnt} from {fk_cnt} ({100.0 * round(broken_to_cnt, 4)} %)')
 
-temp_file = get_temp_file_name('temp', Resource.dbname)
-print(f'Writing current state into temporary file:\n"{temp_file}"')
+temp_file = TempFile('temp', Resource.dbname)
+print(f'Writing current state into temporary file:\n"{temp_file.temp_file_path}"')
 input("Enter to proceed: ")
 
-Cache.write_temp_file(temp_file, fk_field, fk_pk_field, fk_broken_list)
+try:
+    temp_file.write_temp_file((str(fk_pk_field), str(fk_field)), fk_broken_list)
+    print(f'Temporary file writing completed.')
+except Exception as e:
+    print(f'Temporary file writing failed!\n{str(e)}')
+    exit(1)
 
 print(f'Generating new keys to {pk_field} from {fk_field} for each {fk_pk_field}:')
 pk_val_list = [pk[0] for pk in pk_list]
@@ -75,7 +78,13 @@ fk_id_list = [fk[0] for fk in fk_broken_list]
 print(f'Saving changes into database:\n"{Resource.dbname}"')
 input("Enter to proceed: ")
 
-Model.update_db_records(session, (fk_entity, fk_pk_field, fk_field), fk_id_list, new_fk_list)
+db_model = Connection(session, fk_entity)
+
+total_size, batch_size = db_model.set_db_fields(fk_pk_field, fk_field, fk_id_list, new_fk_list)
+print(f"Total items: {total_size} ({batch_size} per batch)\n")
+
+batch_cnt, fail_cnt = db_model.update_db_records()
+print(f"Done. ({batch_cnt} batches, {fail_cnt} failed)")
 
 print(f'All updates finished: proceeding to final check of the results...')
 

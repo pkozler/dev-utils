@@ -13,6 +13,7 @@ from math import sqrt, ceil
 from sqlalchemy import func
 
 import db.models
+from classes.connection import Connection
 from classes.generator import Generator
 from classes.db import Db
 
@@ -36,7 +37,7 @@ fields = enter_columns_to_update(resource, table_name, pk_column=id_column_name,
 for col in fields:
     col_type = str.lower(str(col['type']))
 
-    for dt in DbType.DATE_TYPES:
+    for dt in DATE_TYPES:
         if col_type.startswith(dt):
             print(f"{col['name']} -> {col['type']}")
 
@@ -74,28 +75,10 @@ batch_size = int(round(sqrt(float(total_size))))
 print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
 input("Enter to proceed: ")
-last_cnt = 0
+db_model = Connection(session, entity)
 
-for cnt, val in enumerate(id_list):
-    # print(f"{cnt}: {id_col} = {val[0]}; {dt_col} = {datetime_list[cnt]}")
+total_size, batch_size = db_model.set_db_fields(id_col, dt_col, id_list, datetime_list)
+print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
-    try:
-        res = session.query(entity).filter(id_col == id_list[cnt][0]).update(
-            {dt_column_name: datetime_list[cnt]})
-
-        # print(f"{cnt}: {val[0]} ... {res} ")
-
-        if (cnt + 1) % batch_size:
-            continue
-
-        session.commit()
-        print(f"Saved #{last_cnt} -> #{cnt}")
-        last_cnt = cnt
-
-    except IndexError as e:
-        print(f"Error: *** {e} ***")
-
-session.commit()
-print(f"Saved #{last_cnt} -> #{total_size}")
-
-print(f"Completed! ({int(ceil(float(total_size) / float(batch_size)))} batches)")
+batch_cnt, fail_cnt = db_model.update_db_records()
+print(f"Done. ({batch_cnt} batches, {fail_cnt} failed)")
