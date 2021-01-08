@@ -5,9 +5,9 @@ from sqlalchemy.orm import sessionmaker, Session
 from urllib import parse
 
 
-class Db:
+class Resource:
 
-    DB_ENVIRONMENT_CONFIG_NAMES = (db_vyvojar_localhost, db_pz_dev_img_docker) = ('dbOld', 'db')
+    DB_ENVIRONMENT_CONFIG_NAMES = (db_vyvojar_localhost, db_pz_dev_img_docker) = ('dbOld', 'resource')
     DB_OPTIONAL_CONFIG_DEFAULTS = (db_default_encoding, db_default_is_echo_on) = ('utf8', False)
 
     def __init__(self, conf: dict, msg_opts: (str, bool)):
@@ -45,8 +45,8 @@ class Db:
     def get_session(self) -> Session:
         if self._session is None:
             engine = self.get_engine()
-            Session = sessionmaker(bind=engine)
-            self._session = Session()
+            session = sessionmaker(bind=engine)
+            self._session = session()
 
         return self._session
 
@@ -67,30 +67,9 @@ class Db:
     def has_table(self, table_name: str) -> bool:
         return table_name in self.get_tables()
 
-    def get_table_detail(self, table_name: str):
-        if not self.has_table(table_name):
-            return None
-
-        if self._loaded_tables is None:
-            self._loaded_tables = {}
-
-        if table_name not in self._loaded_tables.keys():
-            inspector = self.get_inspector()
-
-            self._loaded_tables[table_name] = dict(
-                table_name=table_name,
-                columns=inspector.get_columns(table_name, schema=self.dbname),
-                pk_constraint=inspector.get_pk_constraint(table_name, schema=self.dbname),
-                foreign_keys=inspector.get_foreign_keys(table_name, schema=self.dbname),
-                indexes=inspector.get_indexes(table_name, schema=self.dbname),
-                unique_constraints=inspector.get_unique_constraints(table_name, schema=self.dbname),
-                check_constraints=inspector.get_check_constraints(table_name, schema=self.dbname), )
-
-        return self._loaded_tables.get(table_name) or None
-
     @classmethod
     def connect(cls, env_db: str = db_pz_dev_img_docker):
-        if env_db not in Db.DB_ENVIRONMENT_CONFIG_NAMES:
+        if env_db not in Resource.DB_ENVIRONMENT_CONFIG_NAMES:
             return None
 
-        return Db(Env.get(env_db), cls.DB_OPTIONAL_CONFIG_DEFAULTS)
+        return Resource(Env.get(env_db), cls.DB_OPTIONAL_CONFIG_DEFAULTS)

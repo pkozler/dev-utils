@@ -5,6 +5,8 @@ import sys
 
 class Env:
 
+    _DEST_BASE_FOLDER = 'config'
+
     _CONFIG_FILE_NAME: str = 'env.json'
 
     (_config_file_path, _config_data_dict, _config_data_keys) = (None, None, None)
@@ -35,7 +37,7 @@ class Env:
     @classmethod
     def _load(cls, config_name: str = _CONFIG_FILE_NAME) -> ():
         config_path = '' if (not config_name) else (
-                os.path.dirname(os.path.realpath(sys.argv[0])) + '/config/' + config_name)
+                os.path.dirname(os.path.realpath(sys.argv[0])) + '/' + Env._DEST_BASE_FOLDER + '/' + config_name)
 
         if not config_path:
             return ()

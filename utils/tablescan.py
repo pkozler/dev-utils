@@ -1,5 +1,5 @@
 from classes.prompt import enter_table_to_update
-from classes.db import Db
+from classes.resource import Resource
 from classes.format import Format
 
 
@@ -43,7 +43,7 @@ def print_table() -> None:
     Format.print()
 
 
-db = Db.connect()
+db = Resource.connect()
 (table) = enter_table_to_update(db)
 
 print_table(*table)

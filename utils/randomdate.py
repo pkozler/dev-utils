@@ -9,13 +9,13 @@
 
 from math import sqrt
 
-from sqlalchemy import func, TIMESTAMP, DateTime, Date
+from sqlalchemy import func
 
 import utils.db.models
 from classes.util import get_date_cols
-from utils.classes.dataupdater import DataUpdater
-from utils.classes.generator import Generator
-from utils.classes.db import Db
+from classes.updater import Updater
+from classes.generator import Generator
+from classes.resource import Resource
 
 args = '--table sales_flat_order --idcol entity_id --dtcol created_at'.split()
 # args = sys.argv[1:]
@@ -28,7 +28,7 @@ table_name = 'sales_flat_order'
 id_column_name = 'entity_id'
 dt_column_name = 'created_at'
 
-resource = Db.connect()
+resource = Resource.connect()
 
 entity = enter_table_to_update(utils.db.models, table_name=table_name)
 print(f"{entity}:\n")
@@ -72,7 +72,7 @@ batch_size = int(round(sqrt(float(total_size))))
 print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
 input("Enter to proceed: ")
-db_model = DataUpdater(session, entity, id_list, datetime_list)
+db_model = Updater(session, entity, id_list, datetime_list)
 
 total_size, batch_size = db_model.set_db_fields(id_col, dt_col)
 print(f"Total items: {total_size} ({batch_size} per batch)\n")

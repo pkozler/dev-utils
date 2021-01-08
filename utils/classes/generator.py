@@ -1,3 +1,5 @@
+from sqlalchemy import TIMESTAMP, INTEGER, BIGINT, SMALLINT, DATETIME, DATE
+
 from datetime import datetime
 from random import randint
 
@@ -5,6 +7,18 @@ from random import randint
 class Generator:
     DEFAULT_MIN_DATE = datetime.strptime("25/12/2011 00:00:00", "%d/%m/%Y %H:%M:%S")
     DEFAULT_MAX_DATE = datetime.strptime("24/12/2020 23:59:59", "%d/%m/%Y %H:%M:%S")
+
+    @classmethod
+    def get_date_cols(cls, fields: list) -> ():
+        for col in fields:
+            if col['type'] in [DATE, DATETIME, TIMESTAMP]:
+                yield col['name'], col['type']
+
+    @classmethod
+    def get_int_cols(cls, fields: list) -> ():
+        for col in fields:
+            if col['type'] in [INTEGER, BIGINT, SMALLINT]:
+                yield col['name'], col['type']
 
     @classmethod
     def generate_datetime_list(cls, min_date: datetime, max_date: datetime, date_count: int, is_sorted: bool = True) -> []:

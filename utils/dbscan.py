@@ -1,7 +1,7 @@
 
-from utils.classes.db import Db
+from classes.resource import Resource
 
-db = Db.connect()
+db = Resource.connect()
 inspector = db.get_inspector()
 
 

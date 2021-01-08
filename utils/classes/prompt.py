@@ -5,8 +5,16 @@ from sqlalchemy import Table, Column
 import db.models
 
 from db.models import Base as Entity
-from utils.classes.db import Db
-from utils.classes.util import to_prefixed, to_camel_case, get_tab_col
+from classes.resource import Resource
+
+
+def get_tab_col(arg: str) -> (str, str):
+    names = str.split(arg, '.')
+
+    if len(names) <= 1:
+        return '', ''
+
+    return names[0], names[1]
 
 
 def enter_table_to_update(module, table_name: str = ''):
@@ -14,6 +22,8 @@ def enter_table_to_update(module, table_name: str = ''):
         table_name = input('Enter table name: ')
     else:
         table_name = str(table_name)
+
+
 
     class_name = to_camel_case(table_name)
 
@@ -30,7 +40,7 @@ def enter_table_to_update(module, table_name: str = ''):
     return table_entity
 
 
-def enter_columns_to_update(db: Db, table_name: str, pk_column: str = '', update_column: str = ''):
+def enter_columns_to_update(db: Resource, table_name: str, pk_column: str = '', update_column: str = ''):
     if not db.has_table(table_name):
         print(f'{table_name} is not in {db.dbname}!')
         exit(1)
