@@ -1,4 +1,4 @@
-from classes.env import Env
+from utils.classes.env import Env
 
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, Session

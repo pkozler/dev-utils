@@ -5,8 +5,10 @@
       <entry url="file://$PROJECT_DIR$">
         <entryData>
           <resourceRoots>
-            <path value="file://$PROJECT_DIR$/db" />
-            <path value="file://$PROJECT_DIR$/temp" />
+            <path value="file://$PROJECT_DIR$/src/tmp" />
+            <path value="file://$PROJECT_DIR$/src/config" />
+            <path value="file://$PROJECT_DIR$/utils/config" />
+            <path value="file://$PROJECT_DIR$/utils/tmp" />
           </resourceRoots>
         </entryData>
       </entry>

@@ -6,14 +6,14 @@ from sqlalchemy import Column, Table
 from sqlalchemy.orm import Query
 from sqlalchemy.sql.functions import func
 
-from classes.db import Db as Resource
+import classes.prompt
+from utils.classes.db import Db as Resource
 
-from classes.generator import Generator
-from db.models import Base as Entity
+from utils.classes.generator import Generator
+from utils.db.models import Base as Entity
 
-from inc import optarg
-from classes.tempfile import TempFile
-from classes.connection import Connection
+from utils.classes.tempfile import TempFile
+from utils.classes.connection import Connection
 
 args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.entity_id'.split()
 # args = sys.argv[1:]
@@ -22,7 +22,7 @@ Resource = Resource.connect(env_db=Resource.db_vyvojar_localhost)
 
 # Init:
 
-(fields): (Entity or Table, Column, Entity or Table, Column) = optarg.get_pk_fk(args)
+(fields): (Entity or Table, Column, Entity or Table, Column) = classes.prompt.get_pk_fk(args)
 pk_entity, pk_field, fk_entity, fk_field = fields
 fk_pk_field: Column = list(fk_field.table.primary_key.columns)[0]  # TODO multiple primary key columns!
 
@@ -51,7 +51,7 @@ fk_cnt: int = int(query_cnt_fk.first()[0])
 broken_to_cnt: float = float(fk_broken_cnt) / float(fk_cnt)
 print(f'Broken keys: {fk_broken_cnt} from {fk_cnt} ({100.0 * round(broken_to_cnt, 4)} %)')
 
-temp_file = TempFile('temp', Resource.dbname)
+temp_file = TempFile(Resource.dbname)
 print(f'Writing current state into temporary file:\n"{temp_file.temp_file_path}"')
 input("Enter to proceed: ")
 
@@ -79,12 +79,21 @@ print(f'Saving changes into database:\n"{Resource.dbname}"')
 input("Enter to proceed: ")
 
 db_model = Connection(session, fk_entity)
+total_size, batch_size, batch_cnt = db_model.set_db_fields(fk_pk_field, fk_field, fk_id_list, new_fk_list)
 
-total_size, batch_size = db_model.set_db_fields(fk_pk_field, fk_field, fk_id_list, new_fk_list)
 print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
-batch_cnt, fail_cnt = db_model.update_db_records()
-print(f"Done. ({batch_cnt} batches, {fail_cnt} failed)")
+counter = 0
+
+try:
+    for x0, x1 in db_model.update_db_records():
+        print(f"Saved #{x0} -> #{x1}")
+        counter += 1
+
+except IndexError as e:
+    print(f"Error:\n{str(e)}\n")
+
+print(f"Done. ({counter} from {batch_cnt} batches)")
 
 print(f'All updates finished: proceeding to final check of the results...')
 

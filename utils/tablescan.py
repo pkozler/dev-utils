@@ -1,9 +1,9 @@
-from inc.prompt import enter_table_to_update
+from classes.prompt import enter_table_to_update
 from classes.db import Db
 from classes.format import Format
 
 
-def print_table(table_name, columns, pk_constraint, foreign_keys, indexes, unique_constraints, check_constraints) -> None:
+def print_table() -> None:
     Format.print("\n")
     Format.print(f"Table_name: '{table_name}'\n", underline=True)
 

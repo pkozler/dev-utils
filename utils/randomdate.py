@@ -7,28 +7,26 @@
     jen za několik posledních měsíců).
 """
 
-from datetime import datetime
-from math import sqrt, ceil
+from math import sqrt
 
 from sqlalchemy import func
 
-import db.models
-from classes.connection import Connection
-from classes.generator import Generator
-from classes.db import Db
+import utils.db.models
+from utils.classes.connection import Connection
+from utils.classes.generator import Generator
+from utils.classes.db import Db
 
 # init:
-from classes.dbtype import DATE_TYPES
-from inc.prompt import enter_table_to_update, enter_columns_to_update
+from utils.classes.dbtype import DATE_TYPES
+from utils.classes.prompt import enter_table_to_update, enter_columns_to_update
 
 table_name = 'sales_flat_order'
 id_column_name = 'entity_id'
 dt_column_name = 'created_at'
 
-# module = importlib.import_module('db.models')
 resource = Db.connect()
 
-entity = enter_table_to_update(db.models, table_name=table_name)
+entity = enter_table_to_update(utils.db.models, table_name=table_name)
 
 print(f"{entity}:\n")
 
@@ -75,9 +73,9 @@ batch_size = int(round(sqrt(float(total_size))))
 print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
 input("Enter to proceed: ")
-db_model = Connection(session, entity)
+db_model = Connection(session, entity, id_list, datetime_list)
 
-total_size, batch_size = db_model.set_db_fields(id_col, dt_col, id_list, datetime_list)
+total_size, batch_size = db_model.set_db_fields(id_col, dt_col)
 print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
 batch_cnt, fail_cnt = db_model.update_db_records()

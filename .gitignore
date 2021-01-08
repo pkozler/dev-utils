@@ -72,7 +72,11 @@ fabric.properties
 
 
 # CUSTOM PROJECT SETTINGS
-.env*
-local*
-db/*
-temp/*
+
+local.*
+utils/db/*
+!utils/db/__init__.py
+utils/tmp/*
+!utils/tmp/.gitkeep
+utils/config/*
+!utils/config/env.example.json
