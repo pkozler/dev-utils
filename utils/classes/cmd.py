@@ -2,9 +2,10 @@ import getopt
 import sys
 
 
-class Prompt:
+class Cmd:
 
-    def __init__(self, options: list):
+    def __init__(self, options: list, require: bool = False):
+        self._require = require
         self._option_keys_input = [f'{o}=' for o in options]
         self._option_keys_output = [f'--{o}' for o in options]
 
@@ -27,9 +28,12 @@ class Prompt:
             if self._option_items.get(o):
                 continue
 
-            entered = input(f"Enter '{str(o).lstrip('-')}': ").strip()
+            entered = None
 
-            if not entered:
+            if self._require:
+                entered = input(f"Enter '{str(o).lstrip('-')}': ").strip()
+
+            if entered is None:
                 raise Exception(f"Error: missing argument '{o}'")
 
             self._option_items[o] = entered

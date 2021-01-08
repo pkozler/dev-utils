@@ -1,5 +1,5 @@
 from classes.model import Model
-from classes.prompt import Prompt
+from classes.cmd import Cmd
 from classes.resource import Resource
 from classes.format import Format
 
@@ -50,7 +50,7 @@ args = '--table sales_flat_order'.split()
 
 db = Resource.connect()
 
-cmd = Prompt([TABLE])
+cmd = Cmd([TABLE])
 table = cmd.set_args(args).get_item(TABLE)
 entity = Model(db, table)
 

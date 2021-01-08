@@ -6,7 +6,7 @@ from sqlalchemy import Column, Table
 from sqlalchemy.orm import Query
 from sqlalchemy.sql.functions import func
 
-import classes.prompt
+import classes.cmd
 from classes.model import Model
 from classes.resource import Resource as Resource
 
@@ -15,7 +15,7 @@ from utils.db.models import Base as Entity
 
 from classes.writer import Writer
 from classes.updater import Updater
-from classes.prompt import Prompt
+from classes.cmd import Cmd
 
 FK_COL, PK_COL = 'fkcol', 'pkcol'
 
@@ -24,7 +24,7 @@ args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.en
 
 resource = Resource.connect(env_db=Resource.db_vyvojar_localhost)
 
-cmd = Prompt([FK_COL, PK_COL])
+cmd = Cmd([FK_COL, PK_COL])
 cmd.set_args(args)
 
 tab, col = cmd.get_pair(PK_COL)

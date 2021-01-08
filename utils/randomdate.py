@@ -16,13 +16,13 @@ from classes.model import Model
 from classes.updater import Updater
 from classes.generator import Generator
 from classes.resource import Resource
-from classes.prompt import Prompt
+from classes.cmd import Cmd
 
 TABLE, ID_COL, DATE_TIME_COL = 'table', 'idcol', 'dtcol'
 args = '--table sales_flat_order --idcol entity_id --dtcol created_at'.split()
 
 resource = Resource.connect()
-cmd = Prompt([TABLE, ID_COL, DATE_TIME_COL])
+cmd = Cmd([TABLE, ID_COL, DATE_TIME_COL])
 
 table = cmd.set_args(args).get_item(TABLE)
 model = Model(resource, table)
