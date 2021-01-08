@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from utils.db.models import Base as Entity
 
 
-class Connection:
+class DataUpdater:
 
     def __init__(self, session: Session, entity: Entity or Table, id_field: Column, update_field: Column):
         self.__session, self.__entity = session, entity

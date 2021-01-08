@@ -12,8 +12,8 @@ from utils.classes.db import Db as Resource
 from utils.classes.generator import Generator
 from utils.db.models import Base as Entity
 
-from utils.classes.tempfile import TempFile
-from utils.classes.connection import Connection
+from utils.classes.tempwriter import TempWriter
+from utils.classes.dataupdater import DataUpdater
 
 args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.entity_id'.split()
 # args = sys.argv[1:]
@@ -51,7 +51,7 @@ fk_cnt: int = int(query_cnt_fk.first()[0])
 broken_to_cnt: float = float(fk_broken_cnt) / float(fk_cnt)
 print(f'Broken keys: {fk_broken_cnt} from {fk_cnt} ({100.0 * round(broken_to_cnt, 4)} %)')
 
-temp_file = TempFile(Resource.dbname)
+temp_file = TempWriter(Resource.dbname)
 print(f'Writing current state into temporary file:\n"{temp_file.temp_file_path}"')
 input("Enter to proceed: ")
 
@@ -78,7 +78,7 @@ fk_id_list = [fk[0] for fk in fk_broken_list]
 print(f'Saving changes into database:\n"{Resource.dbname}"')
 input("Enter to proceed: ")
 
-db_model = Connection(session, fk_entity)
+db_model = DataUpdater(session, fk_entity)
 total_size, batch_size, batch_cnt = db_model.set_db_fields(fk_pk_field, fk_field, fk_id_list, new_fk_list)
 
 print(f"Total items: {total_size} ({batch_size} per batch)\n")

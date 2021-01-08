@@ -9,15 +9,19 @@
 
 from math import sqrt
 
-from sqlalchemy import func
+from sqlalchemy import func, TIMESTAMP, DateTime, Date
 
 import utils.db.models
-from utils.classes.connection import Connection
+from classes.util import get_date_cols
+from utils.classes.dataupdater import DataUpdater
 from utils.classes.generator import Generator
 from utils.classes.db import Db
 
+args = '--table sales_flat_order --idcol entity_id --dtcol created_at'.split()
+# args = sys.argv[1:]
+
 # init:
-from utils.classes.dbtype import DATE_TYPES
+
 from utils.classes.prompt import enter_table_to_update, enter_columns_to_update
 
 table_name = 'sales_flat_order'
@@ -27,17 +31,12 @@ dt_column_name = 'created_at'
 resource = Db.connect()
 
 entity = enter_table_to_update(utils.db.models, table_name=table_name)
-
 print(f"{entity}:\n")
 
 fields = enter_columns_to_update(resource, table_name, pk_column=id_column_name, update_column=dt_column_name)
 
-for col in fields:
-    col_type = str.lower(str(col['type']))
-
-    for dt in DATE_TYPES:
-        if col_type.startswith(dt):
-            print(f"{col['name']} -> {col['type']}")
+for col_name, col_type in get_date_cols(fields):
+    print(f"{col_name} -> {col_type}")
 
 print(f"({len(fields)})\n")
 
@@ -73,7 +72,7 @@ batch_size = int(round(sqrt(float(total_size))))
 print(f"Total items: {total_size} ({batch_size} per batch)\n")
 
 input("Enter to proceed: ")
-db_model = Connection(session, entity, id_list, datetime_list)
+db_model = DataUpdater(session, entity, id_list, datetime_list)
 
 total_size, batch_size = db_model.set_db_fields(id_col, dt_col)
 print(f"Total items: {total_size} ({batch_size} per batch)\n")

@@ -2,7 +2,7 @@ import os
 import sys
 
 
-class TempFile:
+class TempWriter:
 
     def __init__(self, base_path: str) -> None:
         self.__subfolder = os.path.dirname(os.path.realpath(sys.argv[0])) + '/tmp/' + base_path
