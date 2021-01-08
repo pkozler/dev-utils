@@ -12,38 +12,32 @@ from math import sqrt
 from sqlalchemy import func
 
 import utils.db.models
-from classes.util import get_date_cols
+from classes.model import Model
 from classes.updater import Updater
 from classes.generator import Generator
 from classes.resource import Resource
+from classes.prompt import Prompt
 
+TABLE, ID_COL, DATE_TIME_COL = 'table', 'idcol', 'dtcol'
 args = '--table sales_flat_order --idcol entity_id --dtcol created_at'.split()
-# args = sys.argv[1:]
-
-# init:
-
-from utils.classes.prompt import enter_table_to_update, enter_columns_to_update
-
-table_name = 'sales_flat_order'
-id_column_name = 'entity_id'
-dt_column_name = 'created_at'
 
 resource = Resource.connect()
+cmd = Prompt([TABLE, ID_COL, DATE_TIME_COL])
 
-entity = enter_table_to_update(utils.db.models, table_name=table_name)
-print(f"{entity}:\n")
+table = cmd.set_args(args).get_item(TABLE)
+model = Model(resource, table)
+entity = model.entity
 
-fields = enter_columns_to_update(resource, table_name, pk_column=id_column_name, update_column=dt_column_name)
+print(f"{model.table_name}:\n")
 
-for col_name, col_type in get_date_cols(fields):
+for col_name, col_type in Generator.get_date_cols(model.get_all_columns()):
     print(f"{col_name} -> {col_type}")
 
-print(f"({len(fields)})\n")
+dt_column_name = cmd.get_item(ID_COL)
+id_column_name = cmd.get_item(DATE_TIME_COL)
 
-id_col = getattr(entity, id_column_name)
-dt_col = getattr(entity, dt_column_name)
-
-# main:
+id_col = model.get_column(dt_column_name)
+dt_col = model.get_column(id_column_name)
 
 session = resource.get_session()
 

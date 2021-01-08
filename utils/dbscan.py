@@ -1,4 +1,3 @@
-
 from classes.resource import Resource
 
 db = Resource.connect()

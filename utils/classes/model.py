@@ -1,4 +1,4 @@
-from sqlalchemy import Table
+from sqlalchemy import Table, Column
 
 import utils.db.models
 from db.models import Base as Entity
@@ -49,41 +49,81 @@ class Model:
     def entity(self) -> Entity or Table:
         return self.__entity
 
-    def get_columns(self):
+    def get_all_columns(self) -> [Column]:
         if self._columns is None:
             self._columns = self._db.get_inspector().get_columns(self.table_name, schema=self._db.dbname)
 
         return self._columns
 
-    def get_pk_constraint(self):
+    def get_pk_constraint(self) -> [Column]:
         if self._pk_constraint is None:
             self._pk_constraint = self._db.get_inspector().get_pk_constraint(self.table_name, schema=self._db.dbname)
 
         return self._pk_constraint
 
-    def get_foreign_keys(self):
+    def get_all_foreign_keys(self) -> [Column]:
         if self._foreign_keys is None:
             self._foreign_keys = self._db.get_inspector().get_foreign_keys(self.table_name, schema=self._db.dbname)
 
         return self._foreign_keys
 
-    def get_indexes(self):
+    def get_all_indexes(self) -> [Column]:
         if self._indexes is None:
             self._indexes = self._db.get_inspector().get_indexes(self.table_name, schema=self._db.dbname)
 
         return self._indexes
 
-    def get_unique_constraints(self):
+    def get_all_unique_constraints(self) -> [Column]:
         if self._unique_constraints is None:
             self._unique_constraints = self._db.get_inspector().get_unique_constraints(self.table_name, schema=self._db.dbname)
 
         return self._unique_constraints
 
-    def get_check_constraints(self):
+    def get_all_check_constraints(self) -> [Column]:
         if self._check_constraints is None:
             self._check_constraints = self._db.get_inspector().get_check_constraints(self.table_name, schema=self._db.dbname)
 
         return self._check_constraints
+
+    def get_column(self, name) -> Column or None:
+        for x in self.get_all_columns():
+            if x['name'] == name:
+                return getattr(self.entity, name)
+
+        return None
+
+    def get_index(self, name) -> Column or None:
+        for x in self.get_all_indexes():
+            if x['name'] == name:
+                return getattr(self.entity, name)
+
+        return None
+
+    def get_unique_constraint(self, name) -> Column or None:
+        for x in self.get_all_unique_constraints():
+            if x['name'] == name:
+                return getattr(self.entity, name)
+
+        return None
+
+    def get_check_constraint(self, name) -> Column or None:
+        for x in self.get_all_check_constraints():
+            if x['name'] == name:
+                return getattr(self.entity, name)
+
+        return None
+
+    def has_column(self, name) -> bool:
+        return self.get_column(name) is not None
+
+    def has_index(self, name) -> bool:
+        return self.get_index(name) is not None
+
+    def has_unique_constraint(self, name) -> bool:
+        return self.get_unique_constraint(name) is not None
+
+    def has_check_constraint(self, name) -> bool:
+        return self.get_check_constraint(name) is not None
 
     @classmethod
     def to_prefixed(cls, snake_str: str) -> str:
