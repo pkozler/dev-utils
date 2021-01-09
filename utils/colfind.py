@@ -3,7 +3,7 @@ import pymysql.cursors
 from classes.env import Env
 from classes.format import Format
 
-config = Env.get('dbOld')
+config = Env.get('db')
 
 db_name = config['dbname']
 

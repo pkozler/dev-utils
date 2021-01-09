@@ -2,6 +2,8 @@
     Spočítá korelační koeficient pro zadanou dvojici sloupců.
 """
 
+import sys
+
 # # 1. Calculate Mean
 # insert into tab2 (tab1_id, mean)
 # select ID,
@@ -43,3 +45,5 @@
 #          join tab2 stats2
 #               on stats2.tab1_id = sf.ID
 # ;
+
+sys.exit('Not yet implemented!')
