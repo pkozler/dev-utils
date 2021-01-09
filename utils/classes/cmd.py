@@ -4,19 +4,21 @@ import sys
 
 class Cmd:
 
-    def __init__(self, options: list, require: bool = False):
+    def __init__(self, options: list, require: bool = True):
         self._require = require
         self._option_keys_input = [f'{o}=' for o in options]
         self._option_keys_output = [f'--{o}' for o in options]
 
         self._option_items = dict()
-        # self._option_items = dict((k, None) for k in self._option_keys_output)
 
     def set_args(self, arguments: list = None):
         if arguments is None:
             arguments = sys.argv[1:]
 
-        opts, args = getopt.getopt(arguments, [], self._option_keys_input)
+        try:
+            opts, args = getopt.getopt(arguments, [], self._option_keys_input)
+        except getopt.GetoptError as e:
+            opts, args = [], []
 
         for o, a in opts:
             if o not in self._option_keys_output:
@@ -26,6 +28,10 @@ class Cmd:
                 self._option_items[o] = str(a).strip()
 
             if self._option_items.get(o):
+                continue
+
+        for o in self._option_keys_output:
+            if o in self._option_items.keys():
                 continue
 
             entered = None

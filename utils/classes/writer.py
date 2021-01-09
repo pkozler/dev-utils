@@ -11,11 +11,11 @@ class Writer:
         self.__subfolder = self.__dest_folder + '/' + Writer.get_clean_path(subfolder)
 
         i = 0
-        file_path = f"{self.__subfolder}/{str(i)}.csv"
+        file_path = f"{self.__subfolder}-{str(i)}.csv"
 
         while os.path.exists(file_path):
             i += 1
-            file_path = f"{self.__subfolder}/{str(i)}.csv"
+            file_path = f"{self.__subfolder}-{str(i)}.csv"
 
         self.__temp_file_path = file_path
 
@@ -33,7 +33,7 @@ class Writer:
 
     def write_temp_file(self, pair_header: (str, str), pair_list: list):
         with open(self.temp_file_path, 'w+') as fw:
-            fw.write(f'{pair_header[0]:{pair_header[1]}}\n')
+            fw.write(f'{pair_header[0]}:{pair_header[1]}\n')
 
             for fk in pair_list:
                 fw.write(f'{fk[0]}:{fk[1]}\n')

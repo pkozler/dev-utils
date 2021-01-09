@@ -45,8 +45,17 @@ def print_table(entity: Model) -> None:
         Format.print_danger(f"{chk_str}", bold=True)
     Format.print()
 
+    Format.print("Sorted table and foreign key constraint names:\n---\n", False, True)
+    sorted_table_and_fkc_names = db.get_inspector().get_sorted_table_and_fkc_names(entity._db.dbname)
 
-args = '--table sales_flat_order'.split()
+    for s in sorted_table_and_fkc_names:
+        if entity.table_name in s:
+            Format.print(f"{s}", True)
+
+    Format.print()
+
+
+# args = '--table sales_flat_order'.split()
 
 db = Resource.connect()
 

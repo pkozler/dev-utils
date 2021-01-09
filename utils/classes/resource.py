@@ -1,4 +1,4 @@
-from utils.classes.env import Env
+from classes.env import Env
 
 from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker, Session
@@ -7,7 +7,7 @@ from urllib import parse
 
 class Resource:
 
-    DB_ENVIRONMENT_CONFIG_NAMES = (db_vyvojar_localhost, db_pz_dev_img_docker) = ('dbOld', 'resource')
+    DB_ENVIRONMENT_CONFIG_NAMES = (db_vyvojar_localhost, db_pz_dev_img_docker) = ('dbOld', 'db')
     DB_OPTIONAL_CONFIG_DEFAULTS = (db_default_encoding, db_default_is_echo_on) = ('utf8', False)
 
     def __init__(self, conf: dict, msg_opts: (str, bool)):
