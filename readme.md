@@ -1,4 +1,7 @@
-### Initialization:
+### Instalation:
+python3 -m pip install -r requirements.txt
+
+### ORM initialization:
 `~/.local/bin/sqlacodegen --outfile utils/db/models.py mysql+pymysql://root:secret@127.0.0.1:3306/example`
 
 ###### Generated source code:
