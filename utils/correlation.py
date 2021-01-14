@@ -1,6 +1,7 @@
 """
-    Spočítá korelační koeficient pro zadanou dvojici sloupců.
+    Použití: spočítá korelační koeficient pro zadanou dvojici sloupců.
 """
+
 
 import sys
 

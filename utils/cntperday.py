@@ -1,6 +1,8 @@
 """
-    Nalezne přibližný maximální počet záznamů načtených jedním dotazem v zadaném časovém limitu.
+    Použití: nalezne přibližný maximální počet záznamů
+    k načtení jedním dotazem v zadaném časovém limitu.
 """
+
 
 import time
 

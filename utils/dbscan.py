@@ -1,3 +1,10 @@
+"""
+    Použití: provede rychlý průzkum tabulek v zadané databázi, pro každé schéma
+    vypíše obsažené tabulky, pro každou z těchto tabulek vypíše seznam jejích sloupců
+    a dále vypíše seznam všech cizích klíčů seřazený podle vynuceného pořadí vytáření tabulek.
+"""
+
+
 from classes.resource import Resource
 
 db = Resource.connect()

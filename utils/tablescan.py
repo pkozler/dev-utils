@@ -1,3 +1,8 @@
+"""
+    Použití: provede hloubkový průzkum zadané tabulky a vypíše její sloupce, primární klíč,
+    seznam cizích klíčů, indexů, množin unikátních sloupců, množin povolených hodnot atd.
+"""
+
 from classes.model import Model
 from classes.cmd import Cmd
 from classes.resource import Resource

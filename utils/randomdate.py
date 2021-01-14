@@ -1,11 +1,12 @@
 """
     Použití: v tabulce např. sales_flat_order nastaví hodnoty created_at náhodně
     z intervalu '2012-01-01' až '2020-12-31', aby pro záznamy X a Y platilo,
-    že pokud  X.entity_id  < Y.entity_id , pak i X.created_at < Y.created_at"
+    že pokud "X.entity_id  < Y.entity_id", pak i "X.created_at < Y.created_at"
     (typický problém při testování BI metrik, kde chceme mít zdrojová data
     ideálně z několika let nazpátek, ale pro úsporu místa máme na devu data
     jen za několik posledních měsíců).
 """
+
 
 from sqlalchemy import func
 

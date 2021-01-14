@@ -1,3 +1,9 @@
+"""
+    Použití: prohledá všechny sloupce ve všech tabulkách a vypíše dvojici ve formátu
+    'tabulka.sloupec', pro všechny sloupce, jejichž název obsahuje zadaný podřetězec.
+"""
+
+
 import pymysql.cursors
 
 from classes.env import Env

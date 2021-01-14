@@ -1,5 +1,8 @@
 """
-    SELECT COUNT(*) FROM aiti_expedition_parcel WHERE flat_order_id NOT IN (SELECT entity_id FROM sales_flat_order);
+    Použití: v tabulce např. aiti_expedition_parcel nalezne záznamy s flat_order_id
+    odkazujícím na neexistující záznam sales_flat_order, poté vybere stejný počet
+    hodnot entity_id z existujících záznamů sales_flat_order a náhodně nastaví
+    hodnoty flat_order_id na tyto existující hodnoty (tzn. opraví rozbité cizí klíče).
 """
 
 from sqlalchemy import Column, Table

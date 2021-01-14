@@ -1,3 +1,8 @@
+"""
+    Použití: vypíše zadaný počet řádek error logu v human-readable formátu.
+"""
+
+
 import os
 
 from classes.env import Env
