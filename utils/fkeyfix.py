@@ -20,7 +20,7 @@ from classes.cmd import Cmd
 
 FK_COL, PK_COL = 'fkcol', 'pkcol'
 
-# args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.entity_id'.split()
+# args = '--{FK_COL} aiti_expedition_parcel.flat_order_id --{PK_COL} sales_flat_order.entity_id'.split()
 cmd = Cmd([FK_COL, PK_COL])
 cmd.set_args()
 

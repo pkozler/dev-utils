@@ -4,8 +4,7 @@ import sys
 
 class Cmd:
 
-    def __init__(self, options: list, require: bool = True):
-        self._require = require
+    def __init__(self, options: list):
         self._option_keys_input = [f'{o}=' for o in options]
         self._option_keys_output = [f'--{o}' for o in options]
 
@@ -25,7 +24,7 @@ class Cmd:
                 raise Exception(f"Error: invalid option '{o}'")
 
             if o not in self._option_items.keys():
-                self._option_items[o] = str(a).strip()
+                self._option_items[o] = str(a)
 
             if self._option_items.get(o):
                 continue
@@ -34,12 +33,9 @@ class Cmd:
             if o in self._option_items.keys():
                 continue
 
-            entered = None
+            entered = input(f"Enter '{str(o).lstrip('-')}': ")
 
-            if self._require:
-                entered = input(f"Enter '{str(o).lstrip('-')}': ").strip()
-
-            if entered is None:
+            if not len(entered):
                 raise Exception(f"Error: missing argument '{o}'")
 
             self._option_items[o] = entered

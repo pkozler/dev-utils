@@ -7,8 +7,12 @@
 import pymysql.cursors
 from pymysql import Connection
 
+from classes.cmd import Cmd
 from classes.env import Env
 from classes.format import Format
+
+
+OPT_SEARCH = 'search'
 
 
 def get_clean_identifier(substr: str) -> str or None:
@@ -28,16 +32,36 @@ def get_db_name(db_conf: dict) -> str or None:
 
 
 def get_db_conn(db_conf: dict) -> Connection or None:
-    # noinspection PyBroadException
     try:
-        connection = pymysql.connect(host=db_conf['host'],
-                                     user=db_conf['username'],
-                                     password=db_conf['password'],
-                                     db='information_schema',
-                                     charset='utf8',
-                                     cursorclass=pymysql.cursors.DictCursor)
-        return connection
-    except Exception:
+        host_port = db_conf['host'].split(':')
+
+        if len(host_port) <= 0:
+            return None
+
+        db_host = host_port[0]
+
+        if len(host_port) <= 1:
+            return pymysql.connect(host=db_host,
+                                   user=db_conf['username'],
+                                   password=db_conf['password'],
+                                   db='information_schema',
+                                   charset='utf8',
+                                   cursorclass=pymysql.cursors.DictCursor)
+
+        db_port = int(host_port[1])
+
+        return pymysql.connect(host=db_host,
+                               port=db_port,
+                               user=db_conf['username'],
+                               password=db_conf['password'],
+                               db='information_schema',
+                               charset='utf8',
+                               cursorclass=pymysql.cursors.DictCursor)
+
+    except Exception as e:
+
+        print(e)
+        exit(1)
         return None
 
 
@@ -94,5 +118,7 @@ def search_table_columns(db_conf: dict, search_str: str):
 
 
 config = Env.get('db')
-search = get_clean_identifier(input('Search:'))
+cmd = Cmd([OPT_SEARCH])
+
+search = get_clean_identifier(cmd.set_args().get_item(OPT_SEARCH))
 search_table_columns(config, search)
