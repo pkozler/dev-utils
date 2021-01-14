@@ -5,44 +5,94 @@
 
 
 import pymysql.cursors
+from pymysql import Connection
 
 from classes.env import Env
 from classes.format import Format
 
+
+def get_clean_identifier(substr: str) -> str or None:
+    identifier = substr.strip().strip('`')
+
+    if not len(identifier):
+        return None
+
+    return identifier
+
+
+def get_db_name(db_conf: dict) -> str or None:
+    if 'dbname' not in db_conf.keys():
+        return None
+
+    return get_clean_identifier(db_conf['dbname'])
+
+
+def get_db_conn(db_conf: dict) -> Connection or None:
+    # noinspection PyBroadException
+    try:
+        connection = pymysql.connect(host=db_conf['host'],
+                                     user=db_conf['username'],
+                                     password=db_conf['password'],
+                                     db='information_schema',
+                                     charset='utf8',
+                                     cursorclass=pymysql.cursors.DictCursor)
+        return connection
+    except Exception:
+        return None
+
+
+def print_search_result(connection: Connection, db_name: str, search_str: str):
+    try:
+        with connection.cursor() as cursor:
+            sql = """SELECT `table_schema`, `table_name`, `column_name` 
+                        FROM `columns` 
+                        WHERE `table_schema` = \'{}\' 
+                        AND `column_name` LIKE \'%{}%\' 
+                        ORDER BY `table_schema`, `table_name`, `column_name`
+                        ;""".format(db_name, search_str)
+
+            Format.print()
+
+            Format.print('Query:', bold=True)
+            Format.print(sql + '\n')
+
+            cursor.execute(sql)
+            result = cursor.fetchall()
+
+            Format.print_success('Results:', bold=True)
+
+            for row in result:
+                Format.print_success("{}.{}".format(row['table_name'], row['column_name']))
+
+    except Exception as e:
+        Format.print_danger('Error:\n' + str(e))
+    finally:
+        connection.close()
+
+
+def search_table_columns(db_conf: dict, search_str: str):
+    if search_str is None:
+        Format.print_info('No search string...')
+
+        return
+
+    db_name = get_db_name(db_conf)
+
+    if db_name is None:
+        Format.print_warning('Cannot find dbname.')
+
+        return
+
+    connection = get_db_conn(db_conf)
+
+    if connection is None:
+        Format.print_danger('DB connection failed!')
+
+        return
+
+    print_search_result(connection, db_name, search_str)
+
+
 config = Env.get('db')
-
-db_name = config['dbname']
-
-connection = pymysql.connect(host=config['host'],
-                             user=config['username'],
-                             password=config['password'],
-                             db='information_schema',
-                             charset='utf8',
-                             cursorclass=pymysql.cursors.DictCursor)
-
-search_string = input('Search:')
-
-try:
-    with connection.cursor() as cursor:
-        sql = """SELECT `table_schema`, `table_name`, `column_name` 
-        FROM `columns` 
-        WHERE `table_schema` = \'{}\' 
-        AND `column_name` LIKE \'%{}%\' 
-        ORDER BY `table_schema`, `table_name`, `column_name`
-        ;""".format(db_name, search_string)
-
-        Format.print()
-
-        Format.print('Query:', bold=True)
-        Format.print(sql + '\n')
-
-        cursor.execute(sql)
-        result = cursor.fetchall()
-
-        Format.print('Results:', bold=True)
-
-    for row in result:
-        Format.print("{}.{}".format(row['table_name'], row['column_name']))
-
-finally:
-    connection.close()
+search = get_clean_identifier(input('Search:'))
+search_table_columns(config, search)

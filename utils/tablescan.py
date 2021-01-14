@@ -8,12 +8,13 @@ from classes.cmd import Cmd
 from classes.resource import Resource
 from classes.format import Format
 
-TABLE = 'table'
+
+OPT_TABLE = 'table'
 
 
 def print_table(entity: Model) -> None:
     Format.print("\n")
-    Format.print(f"Table_name: '{entity.table_name}'\n", underline=True)
+    Format.print(f"Table name: '{entity.table_name}'\n", underline=True)
 
     Format.print('Columns:\n')
     for column in entity.get_all_columns():
@@ -21,12 +22,12 @@ def print_table(entity: Model) -> None:
         Format.print(f"{col_str}", bold=True)
     Format.print()
 
-    Format.print('Pk_constraint:\n')
+    Format.print('PK constraint:\n')
     pk_str = '-'.join(entity.get_pk_constraint()['constrained_columns'])
     Format.print_primary(f"{pk_str}", bold=True)
     Format.print()
 
-    Format.print('Foreign_keys:\n')
+    Format.print('Foreign keys:\n')
     for foreign_key in entity.get_all_foreign_keys():
         fk_str = f"{', '.join(foreign_key['constrained_columns'])}: {foreign_key['referred_table']}({', '.join(foreign_key['referred_columns'])})"
         Format.print_success(f"{fk_str}", bold=True)
@@ -38,13 +39,13 @@ def print_table(entity: Model) -> None:
         Format.print_info(f"{idx_str}", bold=True)
     Format.print()
 
-    Format.print('Unique_constraints:\n')
+    Format.print('Unique constraints:\n')
     for unique_constraint in entity.get_all_unique_constraints():
         uq_str = f"{unique_constraint['name']}: ({', '.join(unique_constraint['column_names'])})"
         Format.print_warning(f"{uq_str}", bold=True)
     Format.print()
 
-    Format.print('Check_constraints:\n')
+    Format.print('Check constraints:\n')
     for check_constraint in entity.get_all_check_constraints():
         chk_str = f"{check_constraint['name']}: {check_constraint['sqltext']})"
         Format.print_danger(f"{chk_str}", bold=True)
@@ -60,12 +61,12 @@ def print_table(entity: Model) -> None:
     Format.print()
 
 
-# args = '--table sales_flat_order'.split()
-
 db = Resource.connect()
 
-cmd = Cmd([TABLE])
-table = cmd.set_args(args).get_item(TABLE)
-entity = Model(db, table)
+cmd = Cmd([OPT_TABLE])
+# args = '--table sales_flat_order'.split()
 
-print_table(entity)
+table = cmd.set_args().get_item(OPT_TABLE)
+model = Model(db, table)
+
+print_table(model)

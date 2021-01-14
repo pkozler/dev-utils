@@ -5,7 +5,8 @@
     hodnoty flat_order_id na tyto existující hodnoty (tzn. opraví rozbité cizí klíče).
 """
 
-from sqlalchemy import Column, Table
+
+from sqlalchemy import Column
 from sqlalchemy.orm import Query
 from sqlalchemy.sql.functions import func
 
@@ -20,12 +21,10 @@ from classes.cmd import Cmd
 FK_COL, PK_COL = 'fkcol', 'pkcol'
 
 # args = '--fkcol aiti_expedition_parcel.flat_order_id --pkcol sales_flat_order.entity_id'.split()
-
-
-resource = Resource.connect(env_db=Resource.db_vyvojar_localhost)
-
 cmd = Cmd([FK_COL, PK_COL])
 cmd.set_args()
+
+resource = Resource.connect(env_db=Resource.db_vyvojar_localhost)
 
 tab, col = cmd.get_pair(PK_COL)
 pk_model = Model(resource, tab)
@@ -47,6 +46,10 @@ session = resource.get_session()
 
 query_pk: Query = session.query(pk_field)
 query_cnt_fk: Query = session.query(func.count(fk_pk_field[0]))
+
+# -- Example:
+#    SELECT COUNT(*) FROM aiti_expedition_parcel
+#    WHERE flat_order_id NOT IN (SELECT entity_id FROM sales_flat_order);
 query_fk_not_in: Query = session.query(*fk_pk_field, fk_field).filter(
     fk_field.notin_(query_pk.subquery())).order_by(*fk_pk_field)
 
@@ -74,8 +77,7 @@ try:
     print(f'Temporary file writing completed.')
 except Exception as e:
     print(f'Temporary file writing failed!\n{str(e)}')
-# exit(1)
-
+    exit(1)
 
 
 print(f'Generating new keys to {pk_field.name} from {fk_field.name} for each {fk_pk_field_names}:')
@@ -90,7 +92,6 @@ if new_fk_cnt != fk_broken_cnt:
 print(f'Completed generation of required {fk_broken_cnt} keys.')
 
 fk_id_list = [fk[0] for fk in fk_broken_list]
-
 
 
 print(f'Saving changes into database:\n"{resource.dbname}"')
@@ -112,7 +113,6 @@ except IndexError as e:
     print(f"Error:\n{str(e)}\n")
 
 print(f"Done. ({counter} from {batch_cnt} batches)")
-
 
 
 print(f'All updates finished: proceeding to final check of the results...')
