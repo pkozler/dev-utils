@@ -40,4 +40,4 @@ class Writer:
 
     @classmethod
     def get_clean_path(cls, path: str) -> str:
-        return path.replace('\\', '/').strip('/')
+        return path.replace('\\', '/').rstrip('/')
