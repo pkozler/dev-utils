@@ -1,5 +1,7 @@
 class Format:
 
+    # TODO: vracení výstupu namísto výpisu (přesunout do nové třídy pro logování)
+
     COLOR = dict(
         primary=95,
         info=94,

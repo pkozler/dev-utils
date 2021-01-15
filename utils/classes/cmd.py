@@ -4,6 +4,8 @@ import sys
 
 class Cmd:
 
+    # TODO: použít modul argparse místo getopt - https://docs.python.org/3/library/argparse.html#module-argparse
+
     def __init__(self, options: list):
         self._option_keys_input = [f'{o}=' for o in options]
         self._option_keys_output = [f'--{o}' for o in options]
@@ -28,6 +30,8 @@ class Cmd:
 
             if self._option_items.get(o):
                 continue
+
+        # TODO: přesunout čtení ze standardního vstupu do nové třídy
 
         for o in self._option_keys_output:
             if o in self._option_items.keys():

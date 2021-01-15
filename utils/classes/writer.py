@@ -4,6 +4,8 @@ import sys
 
 class Writer:
 
+    # TODO: přesunout výpis do standardního vstupu do nové třídy
+
     _DEST_BASE_FOLDER = 'tmp'
 
     def __init__(self, subfolder: str) -> None:

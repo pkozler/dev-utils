@@ -5,6 +5,9 @@ from random import randint
 
 
 class Generator:
+
+    # TODO: oddělit kontrolu datových typů do nové třídy
+
     DEFAULT_MIN_DATE = datetime.strptime("25/12/2011 00:00:00", "%d/%m/%Y %H:%M:%S")
     DEFAULT_MAX_DATE = datetime.strptime("24/12/2020 23:59:59", "%d/%m/%Y %H:%M:%S")
 
