@@ -6,15 +6,29 @@ class Cmd:
 
     # TODO: použít modul argparse místo getopt - https://docs.python.org/3/library/argparse.html#module-argparse
 
-    def __init__(self, options: list):
+    def __init__(self, options: list, enabled_force_options: bool = False):
+        self._enabled_forced_options = enabled_force_options
+
         self._option_keys_input = [f'{o}=' for o in options]
         self._option_keys_output = [f'--{o}' for o in options]
-
         self._option_items = dict()
 
-    def set_args(self, arguments: list = None):
+        self._system_input_arguments = sys.argv[1:] or []
+
+    def check_arguments_enabled(self, arguments: list or None) -> []:
         if arguments is None:
-            arguments = sys.argv[1:]
+            arguments = []
+
+        if not self._enabled_forced_options:
+            arguments.clear(); arguments = arguments and []
+
+        if not arguments:
+            arguments = self._system_input_arguments
+
+        return arguments
+
+    def set_args(self, arguments: list = None):
+        arguments = self.check_arguments_enabled(arguments)
 
         try:
             opts, args = getopt.getopt(arguments, [], self._option_keys_input)
