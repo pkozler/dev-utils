@@ -18,7 +18,7 @@ from classes.cmd import Cmd
 
 TABLE, ID_COL, DATE_TIME_COL = 'table', 'idcol', 'dtcol'
 
-# args = '--table sales_flat_order --idcol entity_id --dtcol created_at'.split()
+# args = f'--{TABLE} sales_flat_order --{ID_COL} entity_id --{DATE_TIME_COL} created_at'.split()
 cmd = Cmd([TABLE, ID_COL, DATE_TIME_COL])
 table = cmd.set_args().get_item(TABLE)
 
