@@ -5,4 +5,4 @@ utils/db/*
 utils/tmp/*
 !utils/tmp/.gitkeep
 utils/config/*
-!utils/config/env.example.json
+!utils/config/env.json.template
