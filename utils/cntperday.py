@@ -45,6 +45,7 @@ try:
     max_time = 0.0
     last_limit = 0
     current_limit = 1
+    is_descending = False
 
     while max_time <= timeout:
         params = dict(limit=current_limit)
@@ -68,9 +69,47 @@ try:
         last_limit = current_limit
         current_limit *= 2
 
+    current_limit = last_limit
+    last_limit /= 2
+
     Format.print_danger(f'Exceeded time limit ({timeout} ms) with {last_limit} rows!', bold=True)
 
     # TODO: dodatečně zpřesnit pro nalezení optimálního počtu!
+
+    min_time = max_time
+
+    is_descending = True
+    smallest_diff = (current_limit + last_limit) / 2
+    dif_sign_coef = -1.0 if is_descending else 1.0
+
+    last_limit = current_limit
+    current_limit += (dif_sign_coef * smallest_diff)
+
+    while min_time >= timeout:
+        params = dict(limit=current_limit)
+
+        with connection.cursor() as cursor:
+            Format.print(f'SQL:\n{cursor.mogrify(sql, params)}\n')
+
+            Format.print_info(f'Executing for {current_limit} rows...', bold=True)
+
+            start_time = time.time()
+            cursor.execute(sql, params)
+            end_time = time.time()
+
+            current_time = (end_time - start_time) * 1000.0
+
+            if current_time < min_time:
+                min_time = current_time
+
+            Format.print_info(f'Elapsed time: {current_time} ms', bold=True)
+
+        # TODO: dořešit zmenšování rozdílu v limitech výměnou exponendiálního růstu za použití metody půlení intervalu.
+
+        last_limit = current_limit
+        current_limit *= 2
+
+    Format.print_danger(f'Exceeded time limit ({timeout} ms) with {last_limit} rows!', bold=True)
 finally:
     connection.close()
 
