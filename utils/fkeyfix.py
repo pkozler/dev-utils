@@ -22,7 +22,7 @@ FK_COL, PK_COL = 'fkcol', 'pkcol'
 
 # args = f'--{FK_COL} aiti_expedition_parcel.flat_order_id --{PK_COL} sales_flat_order.entity_id'.split()
 cmd = Cmd([FK_COL, PK_COL])
-cmd.set_args()
+cmd.set_arguments()
 
 resource = Resource.connect(env_db=Resource.db_vyvojar_localhost)
 

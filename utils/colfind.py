@@ -120,5 +120,5 @@ def search_table_columns(db_conf: dict, search_str: str):
 config = Env.get('db')
 cmd = Cmd([OPT_SEARCH])
 
-search = get_clean_identifier(cmd.set_args().get_item(OPT_SEARCH))
+search = get_clean_identifier(cmd.set_arguments().get_item(OPT_SEARCH))
 search_table_columns(config, search)

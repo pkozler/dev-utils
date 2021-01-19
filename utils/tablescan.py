@@ -66,7 +66,7 @@ db = Resource.connect()
 cmd = Cmd([OPT_TABLE])
 # args = '--table sales_flat_order'.split()
 
-table = cmd.set_args().get_item(OPT_TABLE)
+table = cmd.set_arguments().get_item(OPT_TABLE)
 model = Model(db, table)
 
 print_table(model)

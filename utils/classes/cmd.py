@@ -4,9 +4,11 @@ import sys
 
 class Cmd:
 
+    __DEFAULT_OPTIONS_MODE = True
+
     # TODO: použít modul argparse místo getopt - https://docs.python.org/3/library/argparse.html#module-argparse
 
-    def __init__(self, options: list, enabled_force_options: bool = False):
+    def __init__(self, options: list, enabled_force_options: bool = __DEFAULT_OPTIONS_MODE):
         self._enabled_forced_options = enabled_force_options
 
         self._option_keys_input = [f'{o}=' for o in options]
@@ -27,7 +29,7 @@ class Cmd:
 
         return arguments
 
-    def set_args(self, arguments: list = None):
+    def set_arguments(self, arguments: list = None):
         arguments = self.check_arguments_enabled(arguments)
 
         try:
@@ -45,18 +47,9 @@ class Cmd:
             if self._option_items.get(o):
                 continue
 
-        # TODO: přesunout čtení ze standardního vstupu do nové třídy
-
         for o in self._option_keys_output:
-            if o in self._option_items.keys():
-                continue
-
-            entered = input(f"Enter '{str(o).lstrip('-')}': ")
-
-            if not len(entered):
+            if o not in self._option_items.keys():
                 raise Exception(f"Error: missing argument '{o}'")
-
-            self._option_items[o] = entered
 
         return self
 

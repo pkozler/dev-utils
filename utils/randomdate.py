@@ -18,11 +18,11 @@ from classes.cmd import Cmd
 
 TABLE, ID_COL, DATE_TIME_COL = 'table', 'idcol', 'dtcol'
 
-# args = f'--{TABLE} sales_flat_order --{ID_COL} entity_id --{DATE_TIME_COL} created_at'.split()
+args = f'--{TABLE} aiti_expedition_tracking_number --{ID_COL} tracking_id --{DATE_TIME_COL} reimported_at'.split()
 cmd = Cmd([TABLE, ID_COL, DATE_TIME_COL])
-table = cmd.set_args().get_item(TABLE)
+table = cmd.set_arguments(args).get_item(TABLE)
 
-resource = Resource.connect()
+resource = Resource.connect(env_db=Resource.db_vyvojar_localhost)
 model = Model(resource, table)
 
 id_column_name = cmd.get_item(ID_COL)

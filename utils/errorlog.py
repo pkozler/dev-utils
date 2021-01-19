@@ -70,7 +70,7 @@ path = Env.get('webLogs')
 log_file = Writer.get_clean_path(str(path)) + '/' + 'error.log'
 
 cmd = Cmd([OPT_LINES])
-line_cnt = try_get_int(cmd.set_args().get_item(OPT_LINES))
+line_cnt = try_get_int(cmd.set_arguments().get_item(OPT_LINES))
 
 logs_str = os.popen('tail -n ' + str(line_cnt) + ' ' + log_file).read()
 print_logs(line_cnt, logs_str)
